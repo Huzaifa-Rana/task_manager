@@ -11,11 +11,15 @@ class AdminController extends Controller
     // Dashboard showing overall system stats
     public function dashboard()
     {
-        // For example, you might want to count total users, tasks, etc.
-        $totalUsers = User::count();
         $totalTasks = \App\Models\Task::count();
-        return view('admin.dashboard', compact('totalUsers', 'totalTasks'));
+        $pendingTasks = \App\Models\Task::where('status', 'pending')->count();
+        $inProgressTasks = \App\Models\Task::where('status', 'in progress')->count();
+        $completedTasks = \App\Models\Task::where('status', 'completed')->count();
+        $tasks = \App\Models\Task::paginate(10); // if you're paginating your tasks
+
+        return view('admin.dashboard', compact('totalTasks', 'pendingTasks', 'inProgressTasks', 'completedTasks', 'tasks'));
     }
+
 
     // Show all users for management
     public function users()

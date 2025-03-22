@@ -16,10 +16,12 @@ class Task extends Model
         'priority',
         'status',
         'user_id',
-        'category_id'
+        'assignee_id',
+        'category_id',
+        'dependent_task_id'
     ];
 
-    // Task belongs to a user
+    // Task belongs to a user (creator)
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -37,6 +39,7 @@ class Task extends Model
         return $this->hasMany(TaskComment::class);
     }
 
+    // Returns the task that this task depends on
     public function dependency()
     {
         return $this->belongsTo(Task::class, 'dependent_task_id');
@@ -46,5 +49,11 @@ class Task extends Model
     public function dependentTasks()
     {
         return $this->hasMany(Task::class, 'dependent_task_id');
+    }
+
+    // Returns the user to whom the task is assigned
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assignee_id');
     }
 }

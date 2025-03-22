@@ -2,9 +2,62 @@
 
 @section('content')
 <div class="container mt-4">
-  <h1 class="mb-4">Task List</h1>
+  <h1 class="mb-4">Admin Dashboard</h1>
 
-  <!-- Search Form with Button -->
+  <!-- Navigation Options -->
+  <div class="mb-4">
+    <a href="{{ route('admin.users') }}" class="btn btn-info">
+      <i class="fas fa-users"></i> Manage Users & Assign Roles
+    </a>
+    <a href="{{ route('categories.index') }}" class="btn btn-warning">
+      <i class="fas fa-folder-open"></i> Manage Categories
+    </a>
+    <a href="{{ route('tasks.create') }}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Create & Assign Task
+    </a>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row">
+    <!-- Total Tasks Card -->
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Total Tasks</h5>
+          <p class="card-text">{{ $totalTasks }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Pending Tasks Card -->
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body">
+          <h5 class="card-title">Pending Tasks</h5>
+          <p class="card-text">{{ $pendingTasks }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- In-Progress Tasks Card -->
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <h5 class="card-title">In-Progress</h5>
+          <p class="card-text">{{ $inProgressTasks }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Completed Tasks Card -->
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Completed Tasks</h5>
+          <p class="card-text">{{ $completedTasks }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
   <form id="search-form" class="mb-3">
     <div class="input-group">
       <input type="text" id="task-search" name="query" class="form-control" placeholder="Search tasks...">
@@ -13,15 +66,6 @@
       </button>
     </div>
   </form>
-
-  <!-- Create Task Button (visible only to admin and manager) -->
-  @if(auth()->check() && auth()->user()->hasAnyRole(['admin', 'manager']))
-  <div class="mb-3">
-    <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-      <i class="fas fa-plus"></i> Create Task
-    </a>
-  </div>
-  @endif
 
   <!-- Tasks Table -->
   <div id="task-list">
@@ -32,11 +76,11 @@
           <th>Due Date</th>
           <th>Priority</th>
           <th>Status</th>
+          <th>Category</th>
           <th>Assigned To</th>
           <th>User Role</th>
-          @if(auth()->check() && auth()->user()->hasAnyRole(['admin','manager']))
-            <th>Actions</th>
-          @endif
+          <th>Dependent Task</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -46,6 +90,12 @@
     <div id="pagination-links">
       {{ $tasks->links() }}
     </div>
+  </div>
+
+  <!-- Calendar Preview -->
+  <div class="mb-4">
+    <h2>Upcoming Tasks Calendar</h2>
+    <div id="admin-calendar"></div>
   </div>
 </div>
 
@@ -71,8 +121,12 @@
 
 @section('scripts')
 <script>
-  // Ensure our script runs after the document is ready.
   $(document).ready(function() {
+    // Delete modal handling
+    var deleteModalEl = document.getElementById('deleteModal');
+    var deleteModal = new bootstrap.Modal(deleteModalEl);
+    var deleteForm = null;
+
     // Function to perform AJAX search with pagination support.
     function performSearch(page = 1) {
       var query = $('#task-search').val();
@@ -103,18 +157,34 @@
       performSearch(page);
     });
 
-    // Delete modal handling.
-    var deleteModalEl = document.getElementById('deleteModal');
-    var deleteModal = new bootstrap.Modal(deleteModalEl);
-    var deleteForm = null;
+    // Delete modal: Delegate click event for delete buttons.
     $(document).on('click', '.delete-task', function(e) {
       e.preventDefault();
       deleteForm = $(this).closest('form');
       deleteModal.show();
     });
+
+    // Confirm deletion.
     $('#confirmDelete').on('click', function() {
       if (deleteForm) {
         deleteForm.submit();
+      }
+    });
+
+    // Initialize FullCalendar for admin.
+    $('#admin-calendar').fullCalendar({
+      weekends: true,
+      events: {
+        url: "{{ route('tasks.timeline.data') }}",
+        error: function() {
+          alert('Error fetching calendar events.');
+        }
+      },
+      eventClick: function(event, jsEvent, view) {
+        jsEvent.preventDefault();
+        if (event.url) {
+          window.open(event.url, '_blank');
+        }
       }
     });
   });

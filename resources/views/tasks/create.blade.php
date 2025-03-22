@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="container mt-4">
     <h1>Create New Task</h1>
     <form action="{{ route('tasks.store') }}" method="POST">
         @csrf
@@ -24,7 +25,25 @@
                 <option value="high">High</option>
             </select>
         </div>
-        <!-- Add fields for category, dependencies, etc. as needed -->
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category:</label>
+            <select name="category_id" id="category_id" class="form-control">
+                <option value="">Select Category</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>        
+        <div class="mb-3">
+            <label for="assignee_id" class="form-label">Assign To:</label>
+            <select name="assignee_id" id="assignee_id" class="form-control">
+                <option value="">Select User</option>
+                @foreach($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Create Task</button>
     </form>
+</div>
 @endsection
