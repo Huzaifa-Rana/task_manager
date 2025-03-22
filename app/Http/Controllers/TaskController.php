@@ -62,6 +62,13 @@ class TaskController extends Controller
         return redirect()->route('dashboard')->with('success', 'Task created successfully.');
     }
 
+
+    public function show(Task $task)
+    {
+        return view('tasks.show', compact('task'));
+    }
+
+
     // Show the form for editing an existing task (admins/managers only)
     public function edit(Task $task)
     {

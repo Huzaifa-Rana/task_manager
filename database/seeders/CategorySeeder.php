@@ -7,18 +7,16 @@ use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        // Define default categories
         $categories = [
             'Work',
             'Personal',
-            'Urgent'
+            'Urgent',
+            'Shopping',
+            'Travel',
+            'Finance',
+            'Health'
         ];
 
         foreach ($categories as $name) {
