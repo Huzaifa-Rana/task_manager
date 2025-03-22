@@ -37,29 +37,29 @@ This is a Task Management System built with **Laravel 11**. The application allo
 
 Follow these steps to set up the project locally after cloning the repository:
 
-1. **Clone the Repository:**
+**Clone the Repository:**
 
     ```bash
     git clone https://github.com/Huzaifa-Rana/task-manager.git
     cd task-manager
     ```
 
-Install PHP Dependencies:
+**Install PHP Dependencies:**
 
-composer install
+`composer install`
 
-Install Frontend Dependencies:
+**Install Frontend Dependencies:**
 
-npm install
+`npm install`
 
-Set Up Environment Variables:
+**Set Up Environment Variables:**
 
 Copy the example environment file to create your own .env file:
 
-cp .env.example .env
+`cp .env.example .env`
 Open the .env file and configure your database and other environment-specific settings. For example:
 
-APP_NAME="Task Management System"
+```APP_NAME="Task Management System"
 APP_ENV=local
 APP_KEY= # (this will be generated)
 APP_DEBUG=true
@@ -71,24 +71,26 @@ DB_PORT=3306
 DB_DATABASE=task_manager
 DB_USERNAME=root
 DB_PASSWORD=yourpassword
+```
 
-Generate Application Key:
-php artisan key:generate
+**Generate Application Key:**
+`php artisan key:generate`
 
-Run Database Migrations and Seeders Cuncurently:
+**Run Database Migrations and Seeders Cuncurently:**
 
 Make sure you have created a database (e.g., task_manager), then run:
 
-php artisan migrate --seed
+`php artisan migrate --seed`
 
-Compile Frontend Assets:
+**Compile Frontend Assets:**
 
 The project uses Vite for asset bundling. Run:
 
-npm run dev
-Serve the Application:
+`npm run dev`
+
+**Serve the Application:**
 
 Start the Laravel development server:
 
-php artisan serve
+`php artisan serve`
 Open your browser and navigate to http://127.0.0.1:8000.
