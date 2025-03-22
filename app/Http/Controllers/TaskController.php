@@ -88,13 +88,14 @@ class TaskController extends Controller
     // Remove the specified task from storage
     public function destroy(Task $task)
     {
+        $user = auth()->user();
         // Only allow deletion if the user is an admin or the owner of the task
-        if (Auth::user()->role !== 'admin' && Auth::id() !== $task->user_id) {
-            return redirect()->route('dashboard')->with('error', 'Unauthorized action.');
+        if ($user->hasRole('admin') || $user->hasRole('manager')) {
+            $task->delete();
+            return redirect()->route('dashboard')->with('success', 'Task deleted successfully.');
         }
 
-        $task->delete();
-        return redirect()->route('dashboard')->with('success', 'Task deleted successfully.');
+        return redirect()->route('dashboard')->with('error', 'Unauthorized action.');
     }
 
     //  Extra Features
